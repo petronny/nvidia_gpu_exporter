@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -188,8 +189,9 @@ func (e *GPUExporter) Collect(metricCh chan<- prometheus.Metric) {
 		return
 	}
 
-	for _, currentRow := range currentTable.Rows {
-		uuid := strings.TrimPrefix(strings.ToLower(currentRow.QFieldToCells[uuidQField].RawValue), "gpu-")
+	for i, currentRow := range currentTable.Rows {
+		hostname, _ := os.Hostname()
+		uuid := hostname + ":" + strconv.Itoa(i)
 		name := currentRow.QFieldToCells[nameQField].RawValue
 		driverModelCurrent := currentRow.QFieldToCells[driverModelCurrentQField].RawValue
 		driverModelPending := currentRow.QFieldToCells[driverModelPendingQField].RawValue
